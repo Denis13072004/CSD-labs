@@ -105,7 +105,9 @@ G1
 
 %% 4. Simulation
 
-omega_sim = lsim(G1,u_id,t);
+idx_baseline=(t>=0.7) & (t < 1.0);
+y0=mean(omega_id(idx_baseline));
+omega_sim = lsim(G1,u_id,t)+y0;
 
 %% 5. FIT calculation
 
@@ -146,4 +148,24 @@ xlabel('Time (s)');
 ylabel('Residual');
 
 title('Model validation residuals');
+
+% tranfer function matlab
+
+data_exp = iddata(omega_id, u_id, Ts);
+G1_is = tfest(data_exp, 1, 0);
+
+disp("Tranfer function identified by matlab:");
+G1_is
+
+figure(3)
+clf;
+plot(t,omega_id);hold on;
+plot(t,omega_sim);
+grid on;
+xlabel('Time(s)');
+ylabel('Motor velocity');
+legend('experimental velocity');
+title('Validation of motor transfer function');
+%Calculate FIT
+
 
